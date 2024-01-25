@@ -19,14 +19,16 @@ public static class BinaryLoader
         MessagePackSerializer.DefaultOptions = options;
 
         // ロード（テスト用にAssetDatabaseを使っているが実際にはAddressableなどで）
-        var path = "Assets/Binary/Person.bytes";
+        var path = "Assets/Binary/MasterDataArray.bytes";
         var asset = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
         var binary = asset.bytes;
 
         // MemoryDatabaseをバイナリから作成
         var memoryDatabase = new MemoryDatabase(binary);
         // テーブルからデータを検索
-        var stage = memoryDatabase.PersonTable.FindByPersonId(1);
-        Debug.Log(stage.Name);
+        var person = memoryDatabase.PersonTable.FindByPersonId(1);
+        var character = memoryDatabase.CharacterMasterTable.FindById(1);
+        Debug.Log($"人名: {person.Name}");
+        Debug.Log($"キャラ名 : {character.Name}");
     }
 }

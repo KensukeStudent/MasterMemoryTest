@@ -9,14 +9,17 @@ using Example.Tables;
 
 namespace Example
 {
-   public sealed class MemoryDatabase : MemoryDatabaseBase
-   {
+    public sealed class MemoryDatabase : MemoryDatabaseBase
+    {
+        public CharacterMasterTable CharacterMasterTable { get; private set; }
         public PersonTable PersonTable { get; private set; }
 
         public MemoryDatabase(
+            CharacterMasterTable CharacterMasterTable,
             PersonTable PersonTable
         )
         {
+            this.CharacterMasterTable = CharacterMasterTable;
             this.PersonTable = PersonTable;
         }
 
@@ -27,7 +30,7 @@ namespace Example
 
         protected override void Init(Dictionary<string, (int offset, int count)> header, System.ReadOnlyMemory<byte> databaseBinary, MessagePack.MessagePackSerializerOptions options, int maxDegreeOfParallelism)
         {
-            if(maxDegreeOfParallelism == 1)
+            if (maxDegreeOfParallelism == 1)
             {
                 InitSequential(header, databaseBinary, options, maxDegreeOfParallelism);
             }
@@ -39,6 +42,7 @@ namespace Example
 
         void InitSequential(Dictionary<string, (int offset, int count)> header, System.ReadOnlyMemory<byte> databaseBinary, MessagePack.MessagePackSerializerOptions options, int maxDegreeOfParallelism)
         {
+            this.CharacterMasterTable = ExtractTableData<CharacterMaster, CharacterMasterTable>(header, databaseBinary, options, xs => new CharacterMasterTable(xs));
             this.PersonTable = ExtractTableData<Person, PersonTable>(header, databaseBinary, options, xs => new PersonTable(xs));
         }
 
@@ -46,9 +50,10 @@ namespace Example
         {
             var extracts = new Action[]
             {
+                () => this.CharacterMasterTable = ExtractTableData<CharacterMaster, CharacterMasterTable>(header, databaseBinary, options, xs => new CharacterMasterTable(xs)),
                 () => this.PersonTable = ExtractTableData<Person, PersonTable>(header, databaseBinary, options, xs => new PersonTable(xs)),
             };
-            
+
             System.Threading.Tasks.Parallel.Invoke(new System.Threading.Tasks.ParallelOptions
             {
                 MaxDegreeOfParallelism = maxDegreeOfParallelism
@@ -63,6 +68,7 @@ namespace Example
         public DatabaseBuilder ToDatabaseBuilder()
         {
             var builder = new DatabaseBuilder();
+            builder.Append(this.CharacterMasterTable.GetRawDataUnsafe());
             builder.Append(this.PersonTable.GetRawDataUnsafe());
             return builder;
         }
@@ -70,6 +76,7 @@ namespace Example
         public DatabaseBuilder ToDatabaseBuilder(MessagePack.IFormatterResolver resolver)
         {
             var builder = new DatabaseBuilder(resolver);
+            builder.Append(this.CharacterMasterTable.GetRawDataUnsafe());
             builder.Append(this.PersonTable.GetRawDataUnsafe());
             return builder;
         }
@@ -81,9 +88,12 @@ namespace Example
             var result = new ValidateResult();
             var database = new ValidationDatabase(new object[]
             {
+                CharacterMasterTable,
                 PersonTable,
             });
 
+            ((ITableUniqueValidate)CharacterMasterTable).ValidateUnique(result);
+            ValidateTable(CharacterMasterTable.All, database, "Id", CharacterMasterTable.PrimaryKeySelector, result);
             ((ITableUniqueValidate)PersonTable).ValidateUnique(result);
             ValidateTable(PersonTable.All, database, "PersonId", PersonTable.PrimaryKeySelector, result);
 
@@ -98,9 +108,11 @@ namespace Example
         {
             switch (tableName)
             {
+                case "character":
+                    return db.CharacterMasterTable;
                 case "person":
                     return db.PersonTable;
-                
+
                 default:
                     return null;
             }
@@ -113,6 +125,7 @@ namespace Example
             if (metaTable != null) return metaTable;
 
             var dict = new Dictionary<string, MasterMemory.Meta.MetaTable>();
+            dict.Add("character", Example.Tables.CharacterMasterTable.CreateMetaTable());
             dict.Add("person", Example.Tables.PersonTable.CreateMetaTable());
 
             metaTable = new MasterMemory.Meta.MetaDatabase(dict);

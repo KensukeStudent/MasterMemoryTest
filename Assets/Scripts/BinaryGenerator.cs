@@ -26,13 +26,21 @@ public static class BinaryGenerator
             new Person(3, 25, Gender.Unknown, "なぞる"),
         };
 
+        var characterMasters = new CharacterMaster[]
+        {
+            new CharacterMaster(1, "ひとかげ", 10),
+            new CharacterMaster(2, "ふしぎだね", 10),
+            new CharacterMaster(3, "銭亀", 10),
+        };
+
         // DatabaseBuilderを使ってバイナリデータを生成する
         var databaseBuilder = new DatabaseBuilder();
         databaseBuilder.Append(personMasters);
+        databaseBuilder.Append(characterMasters);
         var binary = databaseBuilder.Build();
 
         // できたバイナリは永続化しておく
-        var path = "Assets/Binary/Person.bytes";
+        var path = "Assets/Binary/MasterDataArray.bytes";
         var directory = Path.GetDirectoryName(path);
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);

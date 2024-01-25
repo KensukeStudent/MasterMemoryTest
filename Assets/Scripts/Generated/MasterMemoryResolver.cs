@@ -44,9 +44,10 @@ namespace Example
 
         static MasterMemoryResolverGetFormatterHelper()
         {
-            lookup = new global::System.Collections.Generic.Dictionary<Type, int>(1)
+            lookup = new global::System.Collections.Generic.Dictionary<Type, int>(2)
             {
-                {typeof(Person[]), 0 },
+                {typeof(CharacterMaster[]), 0 },
+                {typeof(Person[]), 1 },
             };
         }
 
@@ -57,7 +58,8 @@ namespace Example
 
             switch (key)
             {
-                case 0: return new MessagePack.Formatters.ArrayFormatter<Person>();
+                case 0: return new MessagePack.Formatters.ArrayFormatter<CharacterMaster>();
+                case 1: return new MessagePack.Formatters.ArrayFormatter<Person>();
                 default: return null;
             }
         }

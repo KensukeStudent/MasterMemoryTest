@@ -23,11 +23,47 @@ namespace Example
             return memory;
         }
 
+        public void ReplaceAll(System.Collections.Generic.IList<CharacterMaster> data)
+        {
+            var newData = CloneAndSortBy(data, x => x.Id, System.Collections.Generic.Comparer<int>.Default);
+            var table = new CharacterMasterTable(newData);
+            memory = new MemoryDatabase(
+                table,
+                memory.PersonTable
+            
+            );
+        }
+
+        public void RemoveCharacterMaster(int[] keys)
+        {
+            var data = RemoveCore(memory.CharacterMasterTable.GetRawDataUnsafe(), keys, x => x.Id, System.Collections.Generic.Comparer<int>.Default);
+            var newData = CloneAndSortBy(data, x => x.Id, System.Collections.Generic.Comparer<int>.Default);
+            var table = new CharacterMasterTable(newData);
+            memory = new MemoryDatabase(
+                table,
+                memory.PersonTable
+            
+            );
+        }
+
+        public void Diff(CharacterMaster[] addOrReplaceData)
+        {
+            var data = DiffCore(memory.CharacterMasterTable.GetRawDataUnsafe(), addOrReplaceData, x => x.Id, System.Collections.Generic.Comparer<int>.Default);
+            var newData = CloneAndSortBy(data, x => x.Id, System.Collections.Generic.Comparer<int>.Default);
+            var table = new CharacterMasterTable(newData);
+            memory = new MemoryDatabase(
+                table,
+                memory.PersonTable
+            
+            );
+        }
+
         public void ReplaceAll(System.Collections.Generic.IList<Person> data)
         {
             var newData = CloneAndSortBy(data, x => x.PersonId, System.Collections.Generic.Comparer<int>.Default);
             var table = new PersonTable(newData);
             memory = new MemoryDatabase(
+                memory.CharacterMasterTable,
                 table
             
             );
@@ -39,6 +75,7 @@ namespace Example
             var newData = CloneAndSortBy(data, x => x.PersonId, System.Collections.Generic.Comparer<int>.Default);
             var table = new PersonTable(newData);
             memory = new MemoryDatabase(
+                memory.CharacterMasterTable,
                 table
             
             );
@@ -50,6 +87,7 @@ namespace Example
             var newData = CloneAndSortBy(data, x => x.PersonId, System.Collections.Generic.Comparer<int>.Default);
             var table = new PersonTable(newData);
             memory = new MemoryDatabase(
+                memory.CharacterMasterTable,
                 table
             
             );

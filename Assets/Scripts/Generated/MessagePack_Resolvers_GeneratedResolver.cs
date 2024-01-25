@@ -47,10 +47,11 @@ namespace MessagePack.Resolvers
 
         static GeneratedResolverGetFormatterHelper()
         {
-            lookup = new global::System.Collections.Generic.Dictionary<global::System.Type, int>(2)
+            lookup = new global::System.Collections.Generic.Dictionary<global::System.Type, int>(3)
             {
                 { typeof(global::Gender), 0 },
-                { typeof(global::Person), 1 },
+                { typeof(global::CharacterMaster), 1 },
+                { typeof(global::Person), 2 },
             };
         }
 
@@ -65,7 +66,8 @@ namespace MessagePack.Resolvers
             switch (key)
             {
                 case 0: return new MessagePack.Formatters.GenderFormatter();
-                case 1: return new MessagePack.Formatters.PersonFormatter();
+                case 1: return new MessagePack.Formatters.CharacterMasterFormatter();
+                case 2: return new MessagePack.Formatters.PersonFormatter();
                 default: return null;
             }
         }

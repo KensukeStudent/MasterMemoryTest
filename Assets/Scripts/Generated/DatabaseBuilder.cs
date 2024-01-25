@@ -14,6 +14,12 @@ namespace Example
         public DatabaseBuilder() : this(null) { }
         public DatabaseBuilder(MessagePack.IFormatterResolver resolver) : base(resolver) { }
 
+        public DatabaseBuilder Append(System.Collections.Generic.IEnumerable<CharacterMaster> dataSource)
+        {
+            AppendCore(dataSource, x => x.Id, System.Collections.Generic.Comparer<int>.Default);
+            return this;
+        }
+
         public DatabaseBuilder Append(System.Collections.Generic.IEnumerable<Person> dataSource)
         {
             AppendCore(dataSource, x => x.PersonId, System.Collections.Generic.Comparer<int>.Default);
