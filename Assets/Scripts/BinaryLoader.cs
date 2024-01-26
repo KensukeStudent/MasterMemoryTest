@@ -26,9 +26,7 @@ public static class BinaryLoader
         // MemoryDatabaseをバイナリから作成
         var memoryDatabase = new MemoryDatabase(binary);
         // テーブルからデータを検索
-        var person = memoryDatabase.PersonTable.FindByPersonId(1);
         var character = memoryDatabase.CharacterMasterTable.FindById(1);
-        Debug.Log($"人名: {person.Name}");
         Debug.Log($"キャラ名 : {character.Name}");
     }
 }
