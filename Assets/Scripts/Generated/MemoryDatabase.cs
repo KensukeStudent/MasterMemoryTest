@@ -9,8 +9,8 @@ using Example.Tables;
 
 namespace Example
 {
-    public sealed class MemoryDatabase : MemoryDatabaseBase
-    {
+   public sealed class MemoryDatabase : MemoryDatabaseBase
+   {
         public CharacterMasterTable CharacterMasterTable { get; private set; }
         public PersonTable PersonTable { get; private set; }
 
@@ -30,7 +30,7 @@ namespace Example
 
         protected override void Init(Dictionary<string, (int offset, int count)> header, System.ReadOnlyMemory<byte> databaseBinary, MessagePack.MessagePackSerializerOptions options, int maxDegreeOfParallelism)
         {
-            if (maxDegreeOfParallelism == 1)
+            if(maxDegreeOfParallelism == 1)
             {
                 InitSequential(header, databaseBinary, options, maxDegreeOfParallelism);
             }
@@ -53,7 +53,7 @@ namespace Example
                 () => this.CharacterMasterTable = ExtractTableData<CharacterMaster, CharacterMasterTable>(header, databaseBinary, options, xs => new CharacterMasterTable(xs)),
                 () => this.PersonTable = ExtractTableData<Person, PersonTable>(header, databaseBinary, options, xs => new PersonTable(xs)),
             };
-
+            
             System.Threading.Tasks.Parallel.Invoke(new System.Threading.Tasks.ParallelOptions
             {
                 MaxDegreeOfParallelism = maxDegreeOfParallelism
@@ -112,7 +112,7 @@ namespace Example
                     return db.CharacterMasterTable;
                 case "person":
                     return db.PersonTable;
-
+                
                 default:
                     return null;
             }
