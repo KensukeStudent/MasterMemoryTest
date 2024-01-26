@@ -1,3 +1,9 @@
+実行時はdotnet必須となります。
+以下のコマンドをたたいて、インストールされているかの確認をお願いいたします。
+尚、インストールするdotnetバージョンはマスターメモリと互換性がある必要があります。今回のプロジェクトではver8.0
+dotnet install : https://dotnet.microsoft.com/ja-jp/download
+参考資料 : https://light11.hatenadiary.com/entry/2023/11/20/194245
+
 dotnetコマンド確認
 $ dotnet tool list --global
 
